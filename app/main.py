@@ -6,6 +6,8 @@ from fastapi.middleware.cors import CORSMiddleware
 from database.db_setup import engine
 from database.models import user, place
 
+from routers import places
+
 user.Base.metadata.create_all(bind=engine)
 place.Base.metadata.create_all(bind=engine)
 
@@ -34,6 +36,8 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
+
+app.include_router(places.router)
 
 
 @app.get("/")
