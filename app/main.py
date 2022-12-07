@@ -6,7 +6,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from database.db_setup import engine
 from database.models import user, place
 
-from routers import places
+from routers import places, users
 
 user.Base.metadata.create_all(bind=engine)
 place.Base.metadata.create_all(bind=engine)
@@ -38,11 +38,7 @@ app.add_middleware(
 )
 
 app.include_router(places.router)
-
-
-@app.get("/")
-async def root():
-    return {"hello": "world"}
+app.include_router(users.router)
 
 
 if __name__ == "__main__":

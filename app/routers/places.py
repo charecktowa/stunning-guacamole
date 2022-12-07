@@ -6,10 +6,13 @@ from schemas.place import Place
 
 import utils.places
 
+from auth.jwt_handler import signJWT
+from auth.jwt_bearer import JWTBearer
+
 router = APIRouter(prefix="/places", tags=["places"])
 
 
-@router.get("/places/", response_model=list[Place])
+@router.get("/places/", dependencies=[Depends(JWTBearer())], response_model=list[Place])
 async def read_places(
     skip: int = 0, limit: int = 100, db: Session = Depends(get_db)
 ) -> list[Place]:
@@ -19,7 +22,9 @@ async def read_places(
     raise HTTPException(404, "No se encontraron sitios")
 
 
-@router.get("/places{type}/", response_model=list[Place])
+@router.get(
+    "/places{type}/", dependencies=[Depends(JWTBearer())], response_model=list[Place]
+)
 async def read_places_by_type(
     type: str, skip: int = 0, limit: int = 3, db: Session = Depends(get_db)
 ) -> list[Place]:
@@ -29,7 +34,7 @@ async def read_places_by_type(
     raise HTTPException(404, "No se encontraron sitios")
 
 
-@router.get("/place{id}", response_model=Place)
+@router.get("/place{id}", dependencies=[Depends(JWTBearer())], response_model=Place)
 async def read_place_by_id(id: str, db: Session = Depends(get_db)):
     if db_place := utils.places.get_place(db, place_id=id):
         return db_place
